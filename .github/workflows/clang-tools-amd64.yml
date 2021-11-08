@@ -8,32 +8,11 @@ jobs:
   build:
     strategy:
       matrix:
-        clang-version: [ 3.9, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12.0.1, 13 ]
-        os: [ linux, macosx, windows ]
+        clang-version: [ 6, 12.0.1, 13 ]
+        os: [ linux, macosx ]
         include:
-          - clang-version: 3.9
-            release: llvm-project-3.9.1
-          - clang-version: 4
-            release: llvm-project-4.0.1
-          - clang-version: 5
-            release: llvm-project-5.0.2
           - clang-version: 6
             release: llvm-project-6.0.1
-          - clang-version: 7
-            release: llvm-project-7.1.0
-          - clang-version: 8
-            release: llvm-project-8.0.1
-            extra-cmake-args: '-DCLANG_ANALYZER_ENABLE_Z3_SOLVER=OFF'
-          - clang-version: 9
-            release: llvm-project-9.0.1
-            extra-cmake-args: '-DLLVM_ENABLE_Z3_SOLVER=OFF'
-          - clang-version: 10
-            release: llvm-project-10.0.1
-            extra-cmake-args: '-DLLVM_ENABLE_Z3_SOLVER=OFF'
-          - clang-version: 11
-            release: llvm-project-11.1.0.src
-          - clang-version: 12
-            release: llvm-project-12.0.0.src
           - clang-version: 12.0.1
             release: llvm-project-12.0.1.src
           - clang-version: 13
@@ -52,15 +31,6 @@ jobs:
             bindir: '/build/bin'
             dotexe: ''
             shacmd: 'shasum -a512'
-          - os: windows
-            runner: windows-latest
-            os-cmake-args: '-Thost=x64 -DCMAKE_CXX_FLAGS="/MP /std:c++14" -DLLVM_USE_CRT_MINSIZEREL="MT"'
-            build-args: '--config MinSizeRel'
-            bindir: '/build/MinSizeRel/bin'
-            dotexe: '.exe'
-            shacmd: 'sha512sum.exe'
-            extra-tar-args: '--exclude=${RELEASE}/clang/test/Driver/Inputs/* --exclude=${RELEASE}/libcxx/test/std/input.output/filesystems/Inputs/static_test_env/* --exclude=${RELEASE}/libclc/amdgcn-mesa3d'
-            extra-tar-args-cfe: '--exclude=cfe-${version}.src/test/Driver/Inputs/*'
     runs-on: ${{ matrix.runner }}
     env:
       COMMON_CMAKE_ARGS: '-DBUILD_SHARED_LIBS=OFF -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra"'
